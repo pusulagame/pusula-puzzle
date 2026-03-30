@@ -68,7 +68,7 @@ body{background:#0a0e1a;min-height:100vh;display:flex;flex-direction:column;alig
 
 <div class="puzzle-board"><div class="board-grid" id="boardGrid"></div></div>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="tray-label">Parçaları sürükle → puzzle'a yerleştir</div>
+<div class="tray-label">Parçaları sørøkle → puzzle'a yerleştir</div>
 <div class="pieces-tray" id="piecesTray"></div>
 
 <div class="overlay" id="winOverlay" style="background:rgba(0,0,0,0.85);">
@@ -84,36 +84,29 @@ body{background:#0a0e1a;min-height:100vh;display:flex;flex-direction:column;alig
   <div class="bomb-box">
     <span class="bomb-emoji">💣</span>
     <div class="bomb-title">MAALESEF OLMADI!</div>
-    <div class="bomb-msg">Süren doldu ve bomba patladı! 💥</div>
+    <div class="bomb-msg">Søren doldu ve bomba patladı! 💥</div>
     <div class="bomb-channel">TEKRAR DENEMEK İÇİN<br>@pusulasocial kanalını takipte kal!</div>
     <button class="retry-btn" onclick="restartGame()">🔄 Tekrar Dene</button>
   </div>
 </div>
 
 <script>
-// Telegram Mini App — açılış kaydı
 if (window.Telegram && window.Telegram.WebApp) {
   const tg = window.Telegram.WebApp;
   tg.ready();
   tg.expand();
-  // Bota açılış sinyali gönder
   try { tg.sendData("opened"); } catch(e) {}
 }
 
 const COLS = 4;
 const ROWS = 3;
-const GRID = COLS * ROWS; // 12 parça
+const GRID = COLS * ROWS;
 const TOTAL_SECONDS = 180;
 
-// Pre-sliced canvases for each piece [index] = canvas
 const pieceCanvases = [];
-
 let pieces=[], boardState=[], moves=0, secondsLeft=TOTAL_SECONDS;
 let timerInterval=null, dragPiece=null, touchPiece=null, touchClone=null;
 let placedCount=0, gameOver=false;
-
-// ---- IMAGE LOADING ----
-const IMG_DATA = "image.jpg"; // Ayrı dosyadan yükle
 
 const sourceImg = new Image();
 sourceImg.onload = function() {
@@ -124,7 +117,7 @@ sourceImg.onload = function() {
 sourceImg.onerror = function() {
   document.getElementById('loading').innerHTML = '<p style="color:red">Görsel yüklenemedi!</p>';
 };
-sourceImg.src = IMG_DATA;
+sourceImg.src = 'image.jpg';
 
 function sliceImage() {
   for (let i = 0; i < GRID; i++) {
@@ -132,8 +125,8 @@ function sliceImage() {
     const col = i % COLS;
     const sw = sourceImg.naturalWidth  / COLS;
     const sh = sourceImg.naturalHeight / ROWS;
-    const cw = 200; // canvas width per piece
-    const ch = Math.round(200 * (sh / sw)); // orantılı yükseklik
+    const cw = 200;
+    const ch = Math.round(200 * (sh / sw));
     const c = document.createElement('canvas');
     c.width = cw; c.height = ch;
     const ctx = c.getContext('2d');
@@ -143,10 +136,10 @@ function sliceImage() {
 }
 
 function init() {
-  const order = Array.from({length:GRID*GRID},(_,i)=>i);
+  const order = Array.from({length:GRID},(_,i)=>i);
   shuffle(order);
   pieces = order.map((correctIdx, i) => ({id:i, correctIdx, placed:false}));
-  boardState = Array(GRID*GRID).fill(null);
+  boardState = Array(GRID).fill(null);
   moves=0; placedCount=0; gameOver=false; secondsLeft=TOTAL_SECONDS;
   document.getElementById('moveCount').textContent='0';
   document.getElementById('timerVal').textContent='3:00';
@@ -175,7 +168,7 @@ function triggerBomb() {
   f.className='flash-red';
   document.body.appendChild(f);
   setTimeout(()=>f.remove(),900);
-  setTimeout(()=>document.getElementById('bombOverlay').classList.add('show'),500);
+  setTimeout(()=>document.getElementById('bombOverlay').classList.add('show'),300);
 }
 
 function shuffle(arr){
@@ -188,7 +181,7 @@ function shuffle(arr){
 function renderBoard() {
   const grid = document.getElementById('boardGrid');
   grid.innerHTML='';
-  for(let i=0;i<GRID*GRID;i++){
+  for(let i=0;i<GRID;i++){
     const cell=document.createElement('div');
     cell.className='cell';
     cell.dataset.idx=i;
@@ -216,7 +209,6 @@ function renderTray(){
     el.className='piece';
     el.draggable=true;
     el.dataset.pid=i;
-    // Clone canvas for display
     const srcCanvas = pieceCanvases[p.correctIdx];
     const cv=document.createElement('canvas');
     cv.width=srcCanvas.width;
@@ -249,10 +241,10 @@ function place(pid,cellIdx){
   boardState[cellIdx]=pid;
   moves++; placedCount++;
   document.getElementById('moveCount').textContent=moves;
-  document.getElementById('progressFill').style.width=`${(placedCount/(GRID*GRID))*100}%`;
+  document.getElementById('progressFill').style.width=`${(placedCount/GRID)*100}%`;
   renderBoard();
   renderTray();
-  if(placedCount===GRID*GRID) setTimeout(showWin,350);
+  if(placedCount===GRID) setTimeout(showWin,350);
 }
 
 function touchStart(e,pid){
@@ -298,7 +290,7 @@ function touchEnd(e){
 function showWin(){
   clearInterval(timerInterval);
   gameOver=true;
-  const elapsed=TOTAL_SECONDS-secondsLeft;
+  const elapsed=T��/SECONDS-secondsLeft;
   const m=Math.floor(elapsed/60),s=elapsed%60;
   document.getElementById('winStats').textContent=`${moves} hamle · ${m}:${String(s).padStart(2,'0')} sürede tamamladın!`;
   document.getElementById('winOverlay').classList.add('show');
