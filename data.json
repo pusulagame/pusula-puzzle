@@ -5,10 +5,11 @@
   "started_at": "2026-03-28T03:41:54.688108",
   "games": {
     "puzzle": {
-      "active": false,
-      "total_plays": 29,
-      "started_at": "2026-03-30T20:03:06.431471",
-      "players": []
+      "active": true,
+      "total_plays": 32,
+      "started_at": "2026-03-30T21:15:20.310305",
+      "players": [],
+      "test_mode": true
     }
   }
 }
