@@ -149,6 +149,28 @@ function applyConfig(){
 }
 applyConfig();
 
+// -- Admin API --
+var ADMIN_API_URL = 'http://localhost:8484';
+var ADMIN_API_KEY = 'pusula-admin-2024';
+
+// -- Oyun Durumu Kontrolu (bot'tan) --
+function checkGameActive(callback){
+  if(isAdmin){ callback(true); return; } // admin icin her zaman aktif
+  fetch(ADMIN_API_URL + '/api/status', {
+    method: 'GET',
+    headers: { 'X-Admin-Key': ADMIN_API_KEY }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var active = data && data.games && data.games.puzzle && data.games.puzzle.active;
+    callback(!!active);
+  })
+  .catch(function(){
+    // API'ye ulasilamazsa oynamaya izin ver (offline fallback)
+    callback(true);
+  });
+}
+
 // -- Katilim Kontrolu --
 function checkParticipation(callback){
   if(isAdmin){ callback(false); return; } // admin her zaman oynayabilir
@@ -166,6 +188,15 @@ function markPlayed(){
   if(tg){ try{ tg.sendData('played:'+userId); }catch(e){} }
 }
 
+// -- Oyun Kapali Ekrani --
+function showGameClosed(){
+  document.getElementById('loading').style.display='none';
+  // alreadyScreen'i "kapalı" mesajı ile yeniden kullan
+  document.getElementById('alreadyTitle').textContent = 'Oyun Şu An Kapalı';
+  document.getElementById('alreadyMsg').textContent = 'Etkinlik henüz başlamadı veya sona erdi. Yeni etkinlik için kanalımızı takip et!';
+  document.getElementById('alreadyScreen').classList.add('show');
+}
+
 // -- Gorsel Yukle & Baslat --
 var img = new Image();
 img.onload = function(){
@@ -180,13 +211,21 @@ img.onload = function(){
   }
   document.getElementById('loading').style.display='none';
 
-  checkParticipation(function(alreadyPlayed){
-    if(alreadyPlayed){
-      document.getElementById('alreadyScreen').classList.add('show');
-    } else {
-      startGame();
-      markPlayed();
+  // Önce oyunun aktif olup olmadigini kontrol et
+  checkGameActive(function(isActive){
+    if(!isActive){
+      showGameClosed();
+      return;
     }
+    // Oyun aktifse katilim kontrolu yap
+    checkParticipation(function(alreadyPlayed){
+      if(alreadyPlayed){
+        document.getElementById('alreadyScreen').classList.add('show');
+      } else {
+        startGame();
+        markPlayed();
+      }
+    });
   });
 };
 img.onerror = function(){
