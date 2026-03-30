@@ -5,9 +5,9 @@
   "started_at": "2026-03-28T03:41:54.688108",
   "games": {
     "puzzle": {
-      "active": false,
+      "active": true,
       "total_plays": 34,
-      "started_at": "2026-03-30T21:15:20.310305",
+      "started_at": "2026-03-31T00:59:38.097414",
       "players": [],
       "test_mode": false
     }
