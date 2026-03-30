@@ -150,19 +150,37 @@ function applyConfig(){
 applyConfig();
 
 // -- Oyun & Test Modu Kontrolu --
-var GH_DATA_URL = 'https://raw.githubusercontent.com/pusulagame/pusulabet-puzzle/main/data.json';
+var LOCAL_API   = 'http://localhost:8484';
+var ADMIN_KEY   = 'pusula-admin-2024';
+var GH_DATA_URL = 'https://raw.githubusercontent.com/pusulagame/pusula-puzzle/main/data.json';
 
 function checkGameActive(callback){
   if(isAdmin){ callback(true); return; }
-  fetch(GH_DATA_URL + '?nocache=' + Date.now(), { cache: 'no-store' })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var game = d && d.games && d.games.puzzle;
-      if(!game || !game.active){ callback(false); return; }
-      if(game.test_mode){ callback(false); return; } // test modunda üyeler göremez
-      callback(true);
-    })
-    .catch(function(){ callback(true); });
+
+  // Önce local API'yi dene (file:// veya local sunucu)
+  fetch(LOCAL_API + '/api/status', {
+    headers: { 'X-Admin-Key': ADMIN_KEY },
+    cache: 'no-store'
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var game = d && d.games && d.games.puzzle;
+    if(!game || !game.active){ callback(false); return; }
+    if(game.test_mode){ callback(false); return; }
+    callback(true);
+  })
+  .catch(function(){
+    // Local API yoksa GitHub'dan oku (production)
+    fetch(GH_DATA_URL + '?nocache=' + Date.now(), { cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var game = d && d.games && d.games.puzzle;
+        if(!game || !game.active){ callback(false); return; }
+        if(game.test_mode){ callback(false); return; }
+        callback(true);
+      })
+      .catch(function(){ callback(true); });
+  });
 }
 
 // -- Katilim Kontrolu --
