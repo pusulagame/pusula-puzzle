@@ -149,28 +149,6 @@ function applyConfig(){
 }
 applyConfig();
 
-// -- Admin API --
-var ADMIN_API_URL = 'http://localhost:8484';
-var ADMIN_API_KEY = 'pusula-admin-2024';
-
-// -- Oyun Durumu Kontrolu (bot'tan) --
-function checkGameActive(callback){
-  if(isAdmin){ callback(true); return; } // admin icin her zaman aktif
-  fetch(ADMIN_API_URL + '/api/status', {
-    method: 'GET',
-    headers: { 'X-Admin-Key': ADMIN_API_KEY }
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    var active = data && data.games && data.games.puzzle && data.games.puzzle.active;
-    callback(!!active);
-  })
-  .catch(function(){
-    // API'ye ulasilamazsa oynamaya izin ver (offline fallback)
-    callback(true);
-  });
-}
-
 // -- Katilim Kontrolu --
 function checkParticipation(callback){
   if(isAdmin){ callback(false); return; } // admin her zaman oynayabilir
@@ -188,13 +166,18 @@ function markPlayed(){
   if(tg){ try{ tg.sendData('played:'+userId); }catch(e){} }
 }
 
-// -- Oyun Kapali Ekrani --
-function showGameClosed(){
-  document.getElementById('loading').style.display='none';
-  // alreadyScreen'i "kapalı" mesajı ile yeniden kullan
-  document.getElementById('alreadyTitle').textContent = 'Oyun Şu An Kapalı';
-  document.getElementById('alreadyMsg').textContent = 'Etkinlik henüz başlamadı veya sona erdi. Yeni etkinlik için kanalımızı takip et!';
-  document.getElementById('alreadyScreen').classList.add('show');
+// -- Oyun Durumu: GitHub'daki data.json'dan oku --
+var GH_DATA_URL = 'https://raw.githubusercontent.com/pusulagame/pusulabet-puzzle/main/data.json';
+
+function checkGameActive(callback){
+  if(isAdmin){ callback(true); return; }
+  fetch(GH_DATA_URL + '?nocache=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var active = d && d.games && d.games.puzzle && d.games.puzzle.active;
+      callback(!!active);
+    })
+    .catch(function(){ callback(true); }); // ulasilamazsa acik say
 }
 
 // -- Gorsel Yukle & Baslat --
@@ -211,13 +194,13 @@ img.onload = function(){
   }
   document.getElementById('loading').style.display='none';
 
-  // Önce oyunun aktif olup olmadigini kontrol et
   checkGameActive(function(isActive){
     if(!isActive){
-      showGameClosed();
+      document.getElementById('alreadyTitle').textContent = 'Oyun Su An Kapali';
+      document.getElementById('alreadyMsg').textContent = 'Etkinlik sona erdi. Yeni etkinlik icin kanalimizi takip et!';
+      document.getElementById('alreadyScreen').classList.add('show');
       return;
     }
-    // Oyun aktifse katilim kontrolu yap
     checkParticipation(function(alreadyPlayed){
       if(alreadyPlayed){
         document.getElementById('alreadyScreen').classList.add('show');
