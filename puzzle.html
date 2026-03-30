@@ -149,6 +149,22 @@ function applyConfig(){
 }
 applyConfig();
 
+// -- Oyun & Test Modu Kontrolu --
+var GH_DATA_URL = 'https://raw.githubusercontent.com/pusulagame/pusulabet-puzzle/main/data.json';
+
+function checkGameActive(callback){
+  if(isAdmin){ callback(true); return; }
+  fetch(GH_DATA_URL + '?nocache=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var game = d && d.games && d.games.puzzle;
+      if(!game || !game.active){ callback(false); return; }
+      if(game.test_mode){ callback(false); return; } // test modunda üyeler göremez
+      callback(true);
+    })
+    .catch(function(){ callback(true); });
+}
+
 // -- Katilim Kontrolu --
 function checkParticipation(callback){
   if(isAdmin){ callback(false); return; } // admin her zaman oynayabilir
@@ -180,21 +196,27 @@ img.onload = function(){
   }
   document.getElementById('loading').style.display='none';
 
-  checkParticipation(function(alreadyPlayed){
-    if(alreadyPlayed){
+  checkGameActive(function(isActive){
+    if(!isActive){
+      document.getElementById('alreadyTitle').textContent = 'Oyun Su An Kapali';
+      document.getElementById('alreadyMsg').textContent = 'Etkinlik sona erdi. Yeni etkinlik icin kanalimizi takip et!';
       document.getElementById('alreadyScreen').classList.add('show');
-    } else {
-      startGame();
-      markPlayed();
+      return;
     }
+    checkParticipation(function(alreadyPlayed){
+      if(alreadyPlayed){
+        document.getElementById('alreadyScreen').classList.add('show');
+      } else {
+        startGame();
+        markPlayed();
+      }
+    });
   });
 };
 img.onerror = function(){
   document.getElementById('loading').innerHTML='<p style="color:red">Gorsel yuklenemedi!</p>';
 };
-// Gorseli degistirdiginde V numarasini artir (1, 2, 3...)
-var IMG_VERSION = 1;
-img.src = 'image.jpg?v=' + IMG_VERSION;
+img.src = 'image.jpg?v='+Date.now();
 
 // -- Oyun --
 function startGame(){
