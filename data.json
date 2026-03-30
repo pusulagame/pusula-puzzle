@@ -1,0 +1,14 @@
+{
+  "active": false,
+  "total_plays": 4,
+  "total_wins": 0,
+  "started_at": "2026-03-28T03:41:54.688108",
+  "games": {
+    "puzzle": {
+      "active": false,
+      "total_plays": 19,
+      "started_at": "2026-03-28T14:37:08.641092",
+      "players": []
+    }
+  }
+}
