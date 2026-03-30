@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pusulabet Puzzle</title>
-<!-- v2 cache bust -->
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:#0a0e1a;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:'Segoe UI',sans-serif;overflow-x:hidden;padding:10px 8px;user-select:none;}
@@ -57,91 +56,81 @@ body{background:#0a0e1a;min-height:100vh;display:flex;flex-direction:column;alig
 </head>
 <body>
 
-<div id="loading"><div class="loader"></div><p>YÃÂ¼kleniyor...</p></div>
+<div id="loading"><div class="loader"></div><p>Yuklenıyor...</p></div>
 
 <div class="header">
   <div class="title">Pusula<span>bet</span></div>
   <div class="stats">
     <div class="stat"><div class="stat-val" id="moveCount">0</div><div class="stat-lbl">Hamle</div></div>
-    <div class="stat timer-stat" id="timerStat"><div class="stat-val" id="timerVal">3:00</div><div class="stat-lbl">SÃÂ¼re</div></div>
+    <div class="stat timer-stat" id="timerStat"><div class="stat-val" id="timerVal">3:00</div><div class="stat-lbl">Sure</div></div>
   </div>
 </div>
 
 <div class="puzzle-board"><div class="board-grid" id="boardGrid"></div></div>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="tray-label">ParÃÂ§alarÃÂ± sÃÂ¸rÃÂ¸kle Ã¢â â puzzle'a yerleÃÅ¸tir</div>
+<div class="tray-label">Parcalari surukle Puzzle'a Yerleştir</div>
 <div class="pieces-tray" id="piecesTray"></div>
 
 <div class="overlay" id="winOverlay" style="background:rgba(0,0,0,0.85);">
   <div class="win-box">
-    <span class="win-emoji">Ã°Å¸Å½â°</span>
-    <div class="win-title">TEBRÃÂ°KLER!</div>
-    <div class="win-subtitle" id="winStats">TamamladÃÂ±n!</div>
-    <button class="restart-btn" onclick="restartGame()">Ã°Å¸ââ Tekrar Oyna</button>
+    <span class="win-emoji">🎉</span>
+    <div class="win-title">TEBRIKLERI!</div>
+    <div class="win-subtitle" id="winStats">Tamamladin!</div>
+    <button class="restart-btn" onclick="restartGame()">🔄 Tekrar Oyna</button>
   </div>
 </div>
 
 <div class="overlay" id="bombOverlay" style="background:rgba(0,0,0,0.92);">
   <div class="bomb-box">
-    <span class="bomb-emoji">Ã°Å¸âÂ£</span>
+    <span class="bomb-emoji">💣</span>
     <div class="bomb-title">MAALESEF OLMADI!</div>
-    <div class="bomb-msg">SÃÂ¸ren doldu ve bomba patladÃÂ±! Ã°Å¸âÂ¥</div>
-    <div class="bomb-channel">TEKRAR DENEMEK ÃÂ°Ãâ¡ÃÂ°N<br>@pusulasocial kanalÃÂ±nÃÂ± takipte kal!</div>
-    <button class="retry-btn" onclick="restartGame()">Ã°Å¸ââ Tekrar Dene</button>
+    <div class="bomb-msg">Suren doldu ve bomba patladi! 💥</div>
+    <div class="bomb-channel">TEKRAR DENEMEK ICIN<br>@pusulasocial kanalini takipte kal!</div>
+    <button class="retry-btn" onclick="restartGame()">🔄 Tekrar Dene</button>
   </div>
 </div>
 
 <script>
-if (window.Telegram && window.Telegram.WebApp) {
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-  tg.expand();
-  try { tg.sendData("opened"); } catch(e) {}
+var COLS=4,ROWS=3,GRID=12,TOTAL_SECONDS=180;
+var pieceCanvases=[],pieces=[],boardState=[],moves=0,secondsLeft=TOTAL_SECONDS;
+var timerInterval=null,dragPiece=null,touchPiece=null,touchClone=null,placedCount=0,gameOver=false;
+
+if(window.Telegram&&window.Telegram.WebApp){
+  var tg=window.Telegram.WebApp;
+  tg.ready();tg.expand();
+  try{tg.sendData("opened");}catch(e){}
 }
 
-const COLS = 4;
-const ROWS = 3;
-const GRID = COLS * ROWS;
-const TOTAL_SECONDS = 180;
-
-const pieceCanvases = [];
-let pieces=[], boardState=[], moves=0, secondsLeft=TOTAL_SECONDS;
-let timerInterval=null, dragPiece=null, touchPiece=null, touchClone=null;
-let placedCount=0, gameOver=false;
-
-const sourceImg = new Image();
-sourceImg.onload = function() {
-  sliceImage();
-  document.getElementById('loading').style.display = 'none';
-  init();
-};
-sourceImg.onerror = function() {
-  document.getElementById('loading').innerHTML = '<p style="color:red">GÃÂ¶rsel yÃÂ¼klenemedi!</p>';
-};
-sourceImg.src = 'image.jpg';
-
-function sliceImage() {
-  for (let i = 0; i < GRID; i++) {
-    const row = Math.floor(i / COLS);
-    const col = i % COLS;
-    const sw = sourceImg.naturalWidth  / COLS;
-    const sh = sourceImg.naturalHeight / ROWS;
-    const cw = 200;
-    const ch = Math.round(200 * (sh / sw));
-    const c = document.createElement('canvas');
-    c.width = cw; c.height = ch;
-    const ctx = c.getContext('2d');
-    ctx.drawImage(sourceImg, col*sw, row*sh, sw, sh, 0, 0, cw, ch);
-    pieceCanvases[i] = c;
+var img=new Image();
+img.onload=function(){
+  for(var i=0;i<GRID;i++){
+    var row=Math.floor(i/COLS),col=i%COLS;
+    var sw=img.naturalWidth/COLS,sh=img.naturalHeight/ROWS;
+    var cw=200,ch=Math.round(200*(sh/sw));
+    var c=document.createElement('canvas');
+    c.width=cw;c.height=ch;
+    c.getContext('2d').drawImage(img,col*sw,row*sh,sw,sh,0,0,cw,ch);
+    pieceCanvases[i]=c;
   }
-}
+  document.getElementById('loading').style.display='none';
+  startGame();
+};
+img.onerror=function(){
+  document.getElementById('loading').innerHTML='<p style="color:red">Gorsel yuklenemedi! image.jpg eksik.</p>';
+};
+img.src='image.jpg?v='+Date.now();
 
-function init() {
-  const order = Array.from({length:GRID},(_,i)=>i);
-  shuffle(order);
-  pieces = order.map((correctIdx, i) => ({id:i, correctIdx, placed:false}));
-  boardState = Array(GRID).fill(null);
-  moves=0; placedCount=0; gameOver=false; secondsLeft=TOTAL_SECONDS;
+function startGame(){
+  var order=[];
+  for(var i=0;i<GRID;i++) order.push(i);
+  for(var i=order.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=order[i];order[i]=order[j];order[j]=tmp;
+  }
+  pieces=order.map(function(correctIdx,i){return{id:i,correctIdx:correctIdx,placed:false};});
+  boardState=[];
+  for(var i=0;i<GRID;i++) boardState.push(null);
+  moves=0;placedCount=0;gameOver=false;secondsLeft=TOTAL_SECONDS;
   document.getElementById('moveCount').textContent='0';
   document.getElementById('timerVal').textContent='3:00';
   document.getElementById('progressFill').style.width='0%';
@@ -149,84 +138,79 @@ function init() {
   document.getElementById('winOverlay').classList.remove('show');
   document.getElementById('bombOverlay').classList.remove('show');
   clearInterval(timerInterval);
-  timerInterval = setInterval(tick, 1000);
+  timerInterval=setInterval(tick,1000);
   renderBoard();
   renderTray();
 }
 
-function tick() {
+function restartGame(){startGame();}
+
+function tick(){
   if(gameOver) return;
   secondsLeft--;
-  const m=Math.floor(secondsLeft/60), s=secondsLeft%60;
-  document.getElementById('timerVal').textContent = m+':'+String(s).padStart(2,'0');
+  var m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+  document.getElementById('timerVal').textContent=m+':'+(s<10?'0':'')+s;
   if(secondsLeft<=30) document.getElementById('timerStat').classList.add('warning');
-  if(secondsLeft<=0){clearInterval(timerInterval);triggerBomb();}
+  if(secondsLeft<=0){clearInterval(timerInterval);boom();}
 }
 
-function triggerBomb() {
+function boom(){
   gameOver=true;
-  const f=document.createElement('div');
-  f.className='flash-red';
+  var f=document.createElement('div');f.className='flash-red';
   document.body.appendChild(f);
-  setTimeout(()=>f.remove(),900);
-  setTimeout(()=>document.getElementById('bombOverlay').classList.add('show'),300);
+  setTimeout(function(){f.remove();},900);
+  setTimeout(function(){document.getElementById('bombOverlay').classList.add('show');},400);
 }
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-}
-
-function renderBoard() {
-  const grid = document.getElementById('boardGrid');
+function renderBoard(){
+  var grid=document.getElementById('boardGrid');
   grid.innerHTML='';
-  for(let i=0;i<GRID;i++){
-    const cell=document.createElement('div');
-    cell.className='cell';
-    cell.dataset.idx=i;
-    if(boardState[i]!==null){
-      const p=pieces[boardState[i]];
-      const cv=pieceCanvases[p.correctIdx].cloneNode();
-      const ctx=cv.getContext('2d');
-      ctx.drawImage(pieceCanvases[p.correctIdx],0,0);
-      cell.appendChild(cv);
-      cell.style.border='none';
-    }
-    cell.addEventListener('dragover',e=>{e.preventDefault();if(boardState[i]===null)cell.classList.add('drag-over');});
-    cell.addEventListener('dragleave',()=>cell.classList.remove('drag-over'));
-    cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drag-over');handleDrop(i);});
-    grid.appendChild(cell);
+  for(var i=0;i<GRID;i++){
+    (function(idx){
+      var cell=document.createElement('div');
+      cell.className='cell';
+      cell.dataset.idx=idx;
+      if(boardState[idx]!==null){
+        var p=pieces[boardState[idx]];
+        var cv=document.createElement('canvas');
+        var src=pieceCanvases[p.correctIdx];
+        cv.width=src.width;cv.height=src.height;
+        cv.getContext('2d').drawImage(src,0,0);
+        cell.appendChild(cv);
+        cell.style.border='none';
+      }
+      cell.addEventListener('dragover',function(e){e.preventDefault();if(boardState[idx]===null)cell.classList.add('drag-over');});
+      cell.addEventListener('dragleave',function(){cell.classList.remove('drag-over');});
+      cell.addEventListener('drop',function(e){e.preventDefault();cell.classList.remove('drag-over');handleDrop(idx);});
+      grid.appendChild(cell);
+    })(i);
   }
 }
 
 function renderTray(){
-  const tray=document.getElementById('piecesTray');
+  var tray=document.getElementById('piecesTray');
   tray.innerHTML='';
-  pieces.forEach((p,i)=>{
+  pieces.forEach(function(p,i){
     if(p.placed) return;
-    const el=document.createElement('div');
-    el.className='piece';
-    el.draggable=true;
-    el.dataset.pid=i;
-    const srcCanvas = pieceCanvases[p.correctIdx];
-    const cv=document.createElement('canvas');
-    cv.width=srcCanvas.width;
-    cv.height=srcCanvas.height;
-    cv.getContext('2d').drawImage(srcCanvas,0,0);
-    el.appendChild(cv);
-    el.addEventListener('dragstart',e=>{
-      dragPiece=i;
-      el.classList.add('dragging');
-      e.dataTransfer.effectAllowed='move';
-      e.dataTransfer.setData('text/plain',i);
-    });
-    el.addEventListener('dragend',()=>{el.classList.remove('dragging');dragPiece=null;});
-    el.addEventListener('touchstart',e=>touchStart(e,i),{passive:false});
-    el.addEventListener('touchmove',touchMove,{passive:false});
-    el.addEventListener('touchend',touchEnd,{passive:false});
-    tray.appendChild(el);
+    (function(pid){
+      var el=document.createElement('div');
+      el.className='piece';el.draggable=true;el.dataset.pid=pid;
+      var src=pieceCanvases[p.correctIdx];
+      var cv=document.createElement('canvas');
+      cv.width=src.width;cv.height=src.height;
+      cv.getContext('2d').drawImage(src,0,0);
+      el.appendChild(cv);
+      el.addEventListener('dragstart',function(e){
+        dragPiece=pid;el.classList.add('dragging');
+        e.dataTransfer.effectAllowed='move';
+        e.dataTransfer.setData('text/plain',pid);
+      });
+      el.addEventListener('dragend',function(){el.classList.remove('dragging');dragPiece=null;});
+      el.addEventListener('touchstart',function(e){touchStart(e,pid);},{passive:false});
+      el.addEventListener('touchmove',touchMove,{passive:false});
+      el.addEventListener('touchend',touchEnd,{passive:false});
+      tray.appendChild(el);
+    })(i);
   });
 }
 
@@ -236,69 +220,55 @@ function handleDrop(cellIdx){
 }
 
 function place(pid,cellIdx){
-  const p=pieces[pid];
+  var p=pieces[pid];
   if(p.placed||gameOver) return;
-  p.placed=true;
-  boardState[cellIdx]=pid;
-  moves++; placedCount++;
+  p.placed=true;boardState[cellIdx]=pid;moves++;placedCount++;
   document.getElementById('moveCount').textContent=moves;
-  document.getElementById('progressFill').style.width=`${(placedCount/GRID)*100}%`;
-  renderBoard();
-  renderTray();
-  if(placedCount===GRID) setTimeout(showWin,350);
+  document.getElementById('progressFill').style.width=Math.round(placedCount/GRID*100)+'%';
+  renderBoard();renderTray();
+  if(placedCount===GRID) setTimeout(win,350);
+}
+
+function win(){
+  clearInterval(timerInterval);gameOver=true;
+  var elapsed=TOTAL_SECONDS-secondsLeft;
+  var m=Math.floor(elapsed/60),s=elapsed%60;
+  document.getElementById('winStats').textContent=moves+' hamle - '+m+':'+(s<10?'0':'')+s+' surede tamamladin!';
+  document.getElementById('winOverlay').classList.add('show');
 }
 
 function touchStart(e,pid){
-  e.preventDefault();
-  touchPiece=pid;
-  const t=e.touches[0];
-  const el=e.currentTarget;
-  const r=el.getBoundingClientRect();
+  e.preventDefault();touchPiece=pid;
+  var t=e.touches[0],el=e.currentTarget,r=el.getBoundingClientRect();
   touchClone=el.cloneNode(true);
-  touchClone.style.cssText=`position:fixed;width:${r.width}px;height:${r.height}px;opacity:0.85;pointer-events:none;z-index:999;transform:scale(1.12);border:2px solid #f59e0b;box-shadow:0 6px 24px rgba(245,158,11,0.6);left:${t.clientX-r.width/2}px;top:${t.clientY-r.height/2}px;border-radius:5px;overflow:hidden;`;
+  touchClone.style.cssText='position:fixed;width:'+r.width+'px;height:'+r.height+'px;opacity:.85;pointer-events:none;z-index:999;transform:scale(1.12);border:2px solid #f59e0b;box-shadow:0 6px 24px rgba(245,158,11,.6);left:'+(t.clientX-r.width/2)+'px;top:'+(t.clientY-r.height/2)+'px;border-radius:5px;overflow:hidden;';
   document.body.appendChild(touchClone);
 }
 
 function touchMove(e){
-  e.preventDefault();
-  if(!touchClone) return;
-  const t=e.touches[0];
-  const w=parseFloat(touchClone.style.width);
-  const h=parseFloat(touchClone.style.height);
+  e.preventDefault();if(!touchClone) return;
+  var t=e.touches[0],w=parseFloat(touchClone.style.width),h=parseFloat(touchClone.style.height);
   touchClone.style.left=(t.clientX-w/2)+'px';
   touchClone.style.top=(t.clientY-h/2)+'px';
-  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('drag-over'));
-  const under=document.elementFromPoint(t.clientX,t.clientY);
-  const cell=under?.closest('.cell');
+  document.querySelectorAll('.cell').forEach(function(c){c.classList.remove('drag-over');});
+  var under=document.elementFromPoint(t.clientX,t.clientY);
+  var cell=under&&under.closest?under.closest('.cell'):null;
   if(cell&&boardState[parseInt(cell.dataset.idx)]===null) cell.classList.add('drag-over');
 }
 
 function touchEnd(e){
   e.preventDefault();
   if(touchClone){touchClone.remove();touchClone=null;}
-  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('drag-over'));
+  document.querySelectorAll('.cell').forEach(function(c){c.classList.remove('drag-over');});
   if(touchPiece===null) return;
-  const t=e.changedTouches[0];
-  const under=document.elementFromPoint(t.clientX,t.clientY);
-  const cell=under?.closest('.cell');
+  var t=e.changedTouches[0];
+  var under=document.elementFromPoint(t.clientX,t.clientY);
+  var cell=under&&under.closest?under.closest('.cell'):null;
   if(cell){
-    const idx=parseInt(cell.dataset.idx);
+    var idx=parseInt(cell.dataset.idx);
     if(boardState[idx]===null) place(touchPiece,idx);
   }
   touchPiece=null;
-}
-
-function showWin(){
-  clearInterval(timerInterval);
-  gameOver=true;
-  const elapsed=TÃ¤Ã/SECONDS-secondsLeft;
-  const m=Math.floor(elapsed/60),s=elapsed%60;
-  document.getElementById('winStats').textContent=`${moves} hamle ÃÂ· ${m}:${String(s).padStart(2,'0')} sÃÂ¼rede tamamladÃÂ±n!`;
-  document.getElementById('winOverlay').classList.add('show');
-}
-
-function restartGame(){
-  init();
 }
 </script>
 </body>
