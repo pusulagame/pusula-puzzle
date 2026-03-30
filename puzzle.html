@@ -32,31 +32,47 @@ body{background:#0a0e1a;min-height:100vh;display:flex;flex-direction:column;alig
 .piece canvas{width:100%;height:100%;display:block;}
 .overlay{display:none;position:fixed;inset:0;z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
 .overlay.show{display:flex;}
-.win-box{background:linear-gradient(160deg,#0f172a,#1e293b);border:2px solid #f59e0b;border-radius:20px;padding:28px 24px;max-width:320px;width:90%;text-align:center;box-shadow:0 0 60px rgba(245,158,11,0.3);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) forwards;}
+.win-box{background:linear-gradient(160deg,#0f172a,#1e293b);border:2px solid #f59e0b;border-radius:20px;padding:20px 20px;max-width:340px;width:92%;text-align:center;box-shadow:0 0 60px rgba(245,158,11,0.3);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) forwards;}
+.win-img{width:100%;border-radius:10px;margin-bottom:12px;border:2px solid rgba(245,158,11,0.3);}
+.win-emoji{font-size:40px;margin-bottom:6px;display:block;animation:bounce .6s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-8px) rotate(5deg)}}
+.win-title{font-size:22px;font-weight:900;color:#f59e0b;margin-bottom:4px;text-shadow:0 0 20px #f59e0b;}
+.win-subtitle{font-size:12px;color:#94a3b8;margin-bottom:14px;line-height:1.5;}
 .bomb-box{background:linear-gradient(160deg,#1a0000,#2d0000);border:2px solid #ef4444;border-radius:20px;padding:28px 24px;max-width:320px;width:90%;text-align:center;box-shadow:0 0 60px rgba(239,68,68,0.5);animation:shake .5s ease,popIn .3s forwards;}
 @keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px) rotate(-2deg)}40%{transform:translateX(10px) rotate(2deg)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
-.win-emoji,.bomb-emoji{font-size:56px;margin-bottom:10px;display:block;animation:bounce .6s ease infinite alternate;}
-@keyframes bounce{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-10px) rotate(5deg)}}
-.win-title{font-size:26px;font-weight:900;color:#f59e0b;margin-bottom:6px;text-shadow:0 0 20px #f59e0b;}
-.win-subtitle{font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.5;}
+.bomb-emoji{font-size:56px;margin-bottom:10px;display:block;animation:bounce .6s ease infinite alternate;}
 .bomb-title{font-size:22px;font-weight:900;color:#ef4444;margin-bottom:10px;}
 .bomb-msg{font-size:14px;color:#fca5a5;margin-bottom:8px;line-height:1.6;font-weight:600;}
 .bomb-channel{font-size:15px;color:#f59e0b;font-weight:800;}
-.restart-btn{background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;border-radius:12px;color:white;font-size:15px;font-weight:800;padding:13px 30px;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,0.4);width:100%;}
+.giris-btn{display:block;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;padding:13px 20px;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,0.4);width:100%;text-decoration:none;margin-top:12px;}
+.giris-btn:active{transform:scale(.96);}
 .retry-btn{background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:12px;color:white;font-size:15px;font-weight:800;padding:13px 30px;cursor:pointer;box-shadow:0 4px 20px rgba(239,68,68,0.4);width:100%;margin-top:16px;}
-.restart-btn:active,.retry-btn:active{transform:scale(.96);}
+.retry-btn:active{transform:scale(.96);}
 .flash-red{position:fixed;inset:0;z-index:250;background:rgba(239,68,68,0.5);pointer-events:none;animation:flashOut .8s ease forwards;}
 @keyframes flashOut{0%{opacity:1}100%{opacity:0}}
 #loading{position:fixed;inset:0;background:#0a0e1a;display:flex;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:12px;}
 #loading p{color:#f59e0b;font-size:16px;font-weight:700;}
 .loader{width:40px;height:40px;border:3px solid rgba(245,158,11,0.2);border-top-color:#f59e0b;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+#alreadyScreen{position:fixed;inset:0;background:#0a0e1a;display:none;align-items:center;justify-content:center;z-index:600;flex-direction:column;gap:16px;padding:24px;text-align:center;}
+#alreadyScreen.show{display:flex;}
+.already-emoji{font-size:60px;}
+.already-title{font-size:22px;font-weight:900;color:#f59e0b;}
+.already-msg{font-size:14px;color:#94a3b8;line-height:1.6;}
+.already-btn{display:block;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;padding:13px 30px;cursor:pointer;text-decoration:none;margin-top:8px;}
 </style>
 </head>
 <body>
 
-<div id="loading"><div class="loader"></div><p>Yuklenıyor...</p></div>
+<div id="loading"><div class="loader"></div><p id="loadingText">Yukleniyor...</p></div>
+
+<div id="alreadyScreen">
+  <div class="already-emoji">🎮</div>
+  <div class="already-title" id="alreadyTitle">Zaten Katildin!</div>
+  <div class="already-msg" id="alreadyMsg">Bu etkinlige daha once katildin. Bir sonraki etkinlik icin kanalimizi takip et!</div>
+  <a class="already-btn" id="alreadyBtn" href="https://t2m.io/guncelpusulabet" target="_blank">Pusulabet Giris</a>
+</div>
 
 <div class="header">
   <div class="title">Pusula<span>bet</span></div>
@@ -68,69 +84,127 @@ body{background:#0a0e1a;min-height:100vh;display:flex;flex-direction:column;alig
 
 <div class="puzzle-board"><div class="board-grid" id="boardGrid"></div></div>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="tray-label">Parcalari surukle Puzzle'a Yerleştir</div>
+<div class="tray-label" id="trayLabel">Parcalari surukle Puzzle'a Yerlestir</div>
 <div class="pieces-tray" id="piecesTray"></div>
 
-<div class="overlay" id="winOverlay" style="background:rgba(0,0,0,0.85);">
+<div class="overlay" id="winOverlay" style="background:rgba(0,0,0,0.88);">
   <div class="win-box">
+    <img id="winImg" class="win-img" src="image.jpg" alt="Puzzle">
     <span class="win-emoji">🎉</span>
-    <div class="win-title">TEBRIKLERI!</div>
-    <div class="win-subtitle" id="winStats">Tamamladin!</div>
-    <button class="restart-btn" onclick="restartGame()">🔄 Tekrar Oyna</button>
+    <div class="win-title" id="winTitle">TEBRIKLER!</div>
+    <div class="win-subtitle" id="winStats"></div>
+    <a class="giris-btn" id="winBtn" href="https://t2m.io/guncelpusulabet" target="_blank">🎰 Pusulabet Giris!</a>
   </div>
 </div>
 
 <div class="overlay" id="bombOverlay" style="background:rgba(0,0,0,0.92);">
   <div class="bomb-box">
     <span class="bomb-emoji">💣</span>
-    <div class="bomb-title">MAALESEF OLMADI!</div>
-    <div class="bomb-msg">Suren doldu ve bomba patladi! 💥</div>
-    <div class="bomb-channel">TEKRAR DENEMEK ICIN<br>@pusulasocial kanalini takipte kal!</div>
-    <button class="retry-btn" onclick="restartGame()">🔄 Tekrar Dene</button>
+    <div class="bomb-title" id="bombTitle">MAALESEF OLMADI!</div>
+    <div class="bomb-msg" id="bombMsg">Suren doldu ve bomba patladi!</div>
+    <div class="bomb-channel" id="bombChannel">TEKRAR DENEMEK ICIN<br>@pusulasocial kanalini takipte kal!</div>
+    <button class="retry-btn" onclick="restartGame()">Tekrar Dene</button>
   </div>
 </div>
 
 <script>
-var COLS=4,ROWS=3,GRID=12,TOTAL_SECONDS=180;
-var pieceCanvases=[],pieces=[],boardState=[],moves=0,secondsLeft=TOTAL_SECONDS;
-var timerInterval=null,dragPiece=null,touchPiece=null,touchClone=null,placedCount=0,gameOver=false;
+var COLS=4, ROWS=3, GRID=12, TOTAL_SECONDS=180;
+var pieceCanvases=[], pieces=[], boardState=[], moves=0, secondsLeft=TOTAL_SECONDS;
+var timerInterval=null, dragPiece=null, touchPiece=null, touchClone=null, placedCount=0, gameOver=false;
+var userId=null, hasPlayed=false, isAdmin=false;
 
-if(window.Telegram&&window.Telegram.WebApp){
-  var tg=window.Telegram.WebApp;
-  tg.ready();tg.expand();
-  try{tg.sendData("opened");}catch(e){}
+// -- Telegram WebApp Init --
+var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if(tg){
+  tg.ready();
+  tg.expand();
+  if(tg.initDataUnsafe && tg.initDataUnsafe.user){
+    userId = String(tg.initDataUnsafe.user.id);
+    isAdmin = (userId === '8355860067');
+  }
 }
 
-var img=new Image();
-img.onload=function(){
+// -- Config (admin panelinden okunur) --
+var CONFIG = {
+  girisBtnText: 'Giris Yap!',
+  girisBtnLink: 'https://t2m.io/guncelpusulabet',
+  welcomeTitle: 'Merhaba!',
+  welcomeText: 'Pusulabet Puzzle\'a hos geldin!\nGorseli 3 dakika icinde tamamla.\nSuren biterse bomba patlıyor!',
+  channelMsg1: 'Pusulabet Puzzle 3 dakika icerisinde coz, Freespin kodunu bul!',
+  channelMsg2: 'Suren biterse uzulme, @pusulasocial takip et kazanmaya devam et!'
+};
+
+// Config'i localStorage'dan yukle
+try{
+  var saved = localStorage.getItem('pzl_config');
+  if(saved) CONFIG = Object.assign(CONFIG, JSON.parse(saved));
+}catch(e){}
+
+// Config'i DOM'a uygula
+function applyConfig(){
+  var wb = document.getElementById('winBtn');
+  if(wb){ wb.textContent = CONFIG.girisBtnText; wb.href = CONFIG.girisBtnLink; }
+  var ab = document.getElementById('alreadyBtn');
+  if(ab){ ab.textContent = CONFIG.girisBtnText; ab.href = CONFIG.girisBtnLink; }
+}
+applyConfig();
+
+// -- Katilim Kontrolu --
+function checkParticipation(callback){
+  if(isAdmin){ callback(false); return; } // admin her zaman oynayabilir
+  if(!userId){ callback(false); return; } // userId yoksa serbest
+  try{
+    var played = localStorage.getItem('pzl_played_'+userId);
+    callback(played === '1');
+  }catch(e){ callback(false); }
+}
+
+function markPlayed(){
+  if(!userId || isAdmin) return;
+  try{ localStorage.setItem('pzl_played_'+userId, '1'); }catch(e){}
+  // Bot'a bildir
+  if(tg){ try{ tg.sendData('played:'+userId); }catch(e){} }
+}
+
+// -- Gorsel Yukle & Baslat --
+var img = new Image();
+img.onload = function(){
   for(var i=0;i<GRID;i++){
-    var row=Math.floor(i/COLS),col=i%COLS;
-    var sw=img.naturalWidth/COLS,sh=img.naturalHeight/ROWS;
-    var cw=200,ch=Math.round(200*(sh/sw));
+    var row=Math.floor(i/COLS), col=i%COLS;
+    var sw=img.naturalWidth/COLS, sh=img.naturalHeight/ROWS;
+    var cw=200, ch=Math.round(200*(sh/sw));
     var c=document.createElement('canvas');
-    c.width=cw;c.height=ch;
+    c.width=cw; c.height=ch;
     c.getContext('2d').drawImage(img,col*sw,row*sh,sw,sh,0,0,cw,ch);
     pieceCanvases[i]=c;
   }
   document.getElementById('loading').style.display='none';
-  startGame();
-};
-img.onerror=function(){
-  document.getElementById('loading').innerHTML='<p style="color:red">Gorsel yuklenemedi! image.jpg eksik.</p>';
-};
-img.src='image.jpg?v='+Date.now();
 
+  checkParticipation(function(alreadyPlayed){
+    if(alreadyPlayed){
+      document.getElementById('alreadyScreen').classList.add('show');
+    } else {
+      startGame();
+      markPlayed();
+    }
+  });
+};
+img.onerror = function(){
+  document.getElementById('loading').innerHTML='<p style="color:red">Gorsel yuklenemedi!</p>';
+};
+img.src = 'image.jpg?v='+Date.now();
+
+// -- Oyun --
 function startGame(){
   var order=[];
   for(var i=0;i<GRID;i++) order.push(i);
   for(var i=order.length-1;i>0;i--){
     var j=Math.floor(Math.random()*(i+1));
-    var tmp=order[i];order[i]=order[j];order[j]=tmp;
+    var t=order[i]; order[i]=order[j]; order[j]=t;
   }
-  pieces=order.map(function(correctIdx,i){return{id:i,correctIdx:correctIdx,placed:false};});
-  boardState=[];
-  for(var i=0;i<GRID;i++) boardState.push(null);
-  moves=0;placedCount=0;gameOver=false;secondsLeft=TOTAL_SECONDS;
+  pieces=order.map(function(ci,i){return{id:i,correctIdx:ci,placed:false};});
+  boardState=[]; for(var i=0;i<GRID;i++) boardState.push(null);
+  moves=0; placedCount=0; gameOver=false; secondsLeft=TOTAL_SECONDS;
   document.getElementById('moveCount').textContent='0';
   document.getElementById('timerVal').textContent='3:00';
   document.getElementById('progressFill').style.width='0%';
@@ -139,16 +213,25 @@ function startGame(){
   document.getElementById('bombOverlay').classList.remove('show');
   clearInterval(timerInterval);
   timerInterval=setInterval(tick,1000);
-  renderBoard();
-  renderTray();
+  renderBoard(); renderTray();
 }
 
-function restartGame(){startGame();}
+function restartGame(){
+  // Admin sifirlanabilir, diger kullanicilara izin yok
+  if(!isAdmin){
+    document.getElementById('bombOverlay').classList.remove('show');
+    document.getElementById('alreadyScreen').classList.add('show');
+    return;
+  }
+  document.getElementById('bombOverlay').classList.remove('show');
+  document.getElementById('winOverlay').classList.remove('show');
+  startGame();
+}
 
 function tick(){
   if(gameOver) return;
   secondsLeft--;
-  var m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+  var m=Math.floor(secondsLeft/60), s=secondsLeft%60;
   document.getElementById('timerVal').textContent=m+':'+(s<10?'0':'')+s;
   if(secondsLeft<=30) document.getElementById('timerStat').classList.add('warning');
   if(secondsLeft<=0){clearInterval(timerInterval);boom();}
@@ -156,7 +239,7 @@ function tick(){
 
 function boom(){
   gameOver=true;
-  var f=document.createElement('div');f.className='flash-red';
+  var f=document.createElement('div'); f.className='flash-red';
   document.body.appendChild(f);
   setTimeout(function(){f.remove();},900);
   setTimeout(function(){document.getElementById('bombOverlay').classList.add('show');},400);
@@ -168,16 +251,14 @@ function renderBoard(){
   for(var i=0;i<GRID;i++){
     (function(idx){
       var cell=document.createElement('div');
-      cell.className='cell';
-      cell.dataset.idx=idx;
+      cell.className='cell'; cell.dataset.idx=idx;
       if(boardState[idx]!==null){
         var p=pieces[boardState[idx]];
-        var cv=document.createElement('canvas');
         var src=pieceCanvases[p.correctIdx];
-        cv.width=src.width;cv.height=src.height;
+        var cv=document.createElement('canvas');
+        cv.width=src.width; cv.height=src.height;
         cv.getContext('2d').drawImage(src,0,0);
-        cell.appendChild(cv);
-        cell.style.border='none';
+        cell.appendChild(cv); cell.style.border='none';
       }
       cell.addEventListener('dragover',function(e){e.preventDefault();if(boardState[idx]===null)cell.classList.add('drag-over');});
       cell.addEventListener('dragleave',function(){cell.classList.remove('drag-over');});
@@ -194,16 +275,16 @@ function renderTray(){
     if(p.placed) return;
     (function(pid){
       var el=document.createElement('div');
-      el.className='piece';el.draggable=true;el.dataset.pid=pid;
+      el.className='piece'; el.draggable=true; el.dataset.pid=pid;
       var src=pieceCanvases[p.correctIdx];
       var cv=document.createElement('canvas');
-      cv.width=src.width;cv.height=src.height;
+      cv.width=src.width; cv.height=src.height;
       cv.getContext('2d').drawImage(src,0,0);
       el.appendChild(cv);
       el.addEventListener('dragstart',function(e){
-        dragPiece=pid;el.classList.add('dragging');
+        dragPiece=pid; el.classList.add('dragging');
         e.dataTransfer.effectAllowed='move';
-        e.dataTransfer.setData('text/plain',pid);
+        e.dataTransfer.setData('text/plain',String(pid));
       });
       el.addEventListener('dragend',function(){el.classList.remove('dragging');dragPiece=null;});
       el.addEventListener('touchstart',function(e){touchStart(e,pid);},{passive:false});
@@ -222,34 +303,34 @@ function handleDrop(cellIdx){
 function place(pid,cellIdx){
   var p=pieces[pid];
   if(p.placed||gameOver) return;
-  p.placed=true;boardState[cellIdx]=pid;moves++;placedCount++;
+  p.placed=true; boardState[cellIdx]=pid; moves++; placedCount++;
   document.getElementById('moveCount').textContent=moves;
   document.getElementById('progressFill').style.width=Math.round(placedCount/GRID*100)+'%';
-  renderBoard();renderTray();
+  renderBoard(); renderTray();
   if(placedCount===GRID) setTimeout(win,350);
 }
 
 function win(){
-  clearInterval(timerInterval);gameOver=true;
+  clearInterval(timerInterval); gameOver=true;
   var elapsed=TOTAL_SECONDS-secondsLeft;
-  var m=Math.floor(elapsed/60),s=elapsed%60;
+  var m=Math.floor(elapsed/60), s=elapsed%60;
   document.getElementById('winStats').textContent=moves+' hamle - '+m+':'+(s<10?'0':'')+s+' surede tamamladin!';
+  applyConfig();
   document.getElementById('winOverlay').classList.add('show');
 }
 
 function touchStart(e,pid){
-  e.preventDefault();touchPiece=pid;
-  var t=e.touches[0],el=e.currentTarget,r=el.getBoundingClientRect();
+  e.preventDefault(); touchPiece=pid;
+  var t=e.touches[0], el=e.currentTarget, r=el.getBoundingClientRect();
   touchClone=el.cloneNode(true);
   touchClone.style.cssText='position:fixed;width:'+r.width+'px;height:'+r.height+'px;opacity:.85;pointer-events:none;z-index:999;transform:scale(1.12);border:2px solid #f59e0b;box-shadow:0 6px 24px rgba(245,158,11,.6);left:'+(t.clientX-r.width/2)+'px;top:'+(t.clientY-r.height/2)+'px;border-radius:5px;overflow:hidden;';
   document.body.appendChild(touchClone);
 }
 
 function touchMove(e){
-  e.preventDefault();if(!touchClone) return;
-  var t=e.touches[0],w=parseFloat(touchClone.style.width),h=parseFloat(touchClone.style.height);
-  touchClone.style.left=(t.clientX-w/2)+'px';
-  touchClone.style.top=(t.clientY-h/2)+'px';
+  e.preventDefault(); if(!touchClone) return;
+  var t=e.touches[0], w=parseFloat(touchClone.style.width), h=parseFloat(touchClone.style.height);
+  touchClone.style.left=(t.clientX-w/2)+'px'; touchClone.style.top=(t.clientY-h/2)+'px';
   document.querySelectorAll('.cell').forEach(function(c){c.classList.remove('drag-over');});
   var under=document.elementFromPoint(t.clientX,t.clientY);
   var cell=under&&under.closest?under.closest('.cell'):null;
