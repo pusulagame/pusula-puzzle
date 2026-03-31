@@ -13,7 +13,7 @@
     },
     "penalty": {
       "active": true,
-      "total_plays": 9,
+      "total_plays": 10,
       "started_at": "2026-03-31T19:30:10.505175",
       "players": [
         {
@@ -69,6 +69,12 @@
           "username": "brucew2",
           "name": "Bruce",
           "time": "22:37:32"
+        },
+        {
+          "id": 8277199409,
+          "username": "PusulaEtkinlik",
+          "name": "Pusula Etkinlik",
+          "time": "22:51:12"
         }
       ],
       "test_mode": false,
