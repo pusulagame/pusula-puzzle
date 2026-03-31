@@ -1,32 +1,32 @@
 {
+  "active": false,
+  "total_plays": 4,
+  "total_wins": 0,
+  "started_at": "2026-03-28T03:41:54.688108",
   "games": {
     "puzzle": {
       "active": false,
-      "total_plays": 2,
-      "started_at": null,
-      "players": []
+      "total_plays": 125,
+      "started_at": "2026-03-31T00:59:38.097414",
+      "players": [],
+      "test_mode": false
     },
     "penalty": {
-      "active": false,
-      "total_plays": 0,
-      "started_at": null,
-      "players": [],
-      "total_results": 1,
-      "total_wins": 0,
-      "results": [
+      "active": true,
+      "total_plays": 1,
+      "started_at": "2026-03-31T19:30:10.505175",
+      "players": [
         {
-          "tarih": "2026-03-31 20:39",
-          "telegram_kullanici": "test",
-          "telegram_id": "123",
-          "pusulabet_kullanici": "",
-          "score": "2/5",
-          "goals": 2,
-          "total": 5,
-          "won": false,
-          "source": "http",
-          "sheet_status": "skipped"
+          "id": 8355860067,
+          "username": "brucew2",
+          "name": "Bruce",
+          "time": "19:26:27"
         }
-      ]
+      ],
+      "test_mode": false,
+      "total_results": 0,
+      "total_wins": 0,
+      "results": []
     }
   }
 }
