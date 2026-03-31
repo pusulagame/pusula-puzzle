@@ -13,7 +13,7 @@
     },
     "penalty": {
       "active": true,
-      "total_plays": 2,
+      "total_plays": 3,
       "started_at": "2026-03-31T19:30:10.505175",
       "players": [
         {
@@ -27,6 +27,12 @@
           "username": "brucew2",
           "name": "Bruce",
           "time": "21:04:30"
+        },
+        {
+          "id": 8355860067,
+          "username": "brucew2",
+          "name": "Bruce",
+          "time": "21:19:43"
         }
       ],
       "test_mode": false,
