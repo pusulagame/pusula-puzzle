@@ -11,9 +11,22 @@
       "total_plays": 0,
       "started_at": null,
       "players": [],
-      "total_results": 0,
+      "total_results": 1,
       "total_wins": 0,
-      "results": []
+      "results": [
+        {
+          "tarih": "2026-03-31 20:39",
+          "telegram_kullanici": "test",
+          "telegram_id": "123",
+          "pusulabet_kullanici": "",
+          "score": "2/5",
+          "goals": 2,
+          "total": 5,
+          "won": false,
+          "source": "http",
+          "sheet_status": "skipped"
+        }
+      ]
     }
   }
 }
