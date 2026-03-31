@@ -13,9 +13,16 @@
     },
     "penalty": {
       "active": false,
-      "total_plays": 0,
+      "total_plays": 1,
       "started_at": null,
-      "players": [],
+      "players": [
+        {
+          "id": 8355860067,
+          "username": "brucew2",
+          "name": "Bruce",
+          "time": "19:26:27"
+        }
+      ],
       "test_mode": false,
       "total_results": 0,
       "total_wins": 0,
