@@ -12,7 +12,7 @@
       "test_mode": false
     },
     "penalty": {
-      "active": true,
+      "active": false,
       "total_plays": 0,
       "started_at": "2026-03-31T19:30:10.505175",
       "players": [],
