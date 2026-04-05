@@ -3,19 +3,18 @@
   "games": {
     "puzzle": {
       "active": false,
-      "total_plays": 0,
+      "total_plays": 1,
       "started_at": null,
       "players": []
     },
     "penalty": {
       "active": true,
       "total_plays": 0,
-      "started_at": "2026-04-05T19:29:57.256462",
+      "started_at": null,
       "players": [],
       "total_results": 0,
       "total_wins": 0,
-      "results": [],
-      "test_mode": false
+      "results": []
     }
   }
 }
