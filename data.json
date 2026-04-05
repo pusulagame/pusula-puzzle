@@ -3,7 +3,7 @@
   "games": {
     "puzzle": {
       "active": false,
-      "total_plays": 53,
+      "total_plays": 54,
       "started_at": null,
       "players": []
     },
